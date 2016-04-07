@@ -3,6 +3,9 @@ package com.example.jeffersonalmeida.myappnewasversion;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -14,6 +17,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import fragments.DefaultFragment;
+import fragments.VideosFragment;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -24,15 +30,6 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -67,6 +64,11 @@ public class MainActivity extends AppCompatActivity
             String title = (String) item.getTitle();
             item.setIcon(getIcon(title));
         }
+
+        DefaultFragment defaultFragment = DefaultFragment.newInstance();
+        FragmentManager suportFragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = suportFragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_place, defaultFragment).commit();
 
     }
 
@@ -111,7 +113,6 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
@@ -125,6 +126,27 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        CharSequence title = item.getTitle();
+        Fragment fragment = null;
+        if ( title.equals("Artigos") ){
+
+        }else if( title.equals("Videos")){
+            fragment = VideosFragment.newInstance("", "");
+        }else if( title.equals("Dengue")){
+
+        }
+
+        if ( fragment != null ){
+            FragmentManager suportFragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = suportFragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_place, fragment).commit();
+        }else {
+            DefaultFragment defaultFragment = DefaultFragment.newInstance();
+            FragmentManager suportFragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = suportFragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_place, defaultFragment).commit();
+        }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
