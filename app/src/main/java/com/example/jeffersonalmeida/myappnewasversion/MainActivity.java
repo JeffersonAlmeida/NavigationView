@@ -3,6 +3,7 @@ package com.example.jeffersonalmeida.myappnewasversion;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -42,6 +43,49 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        Menu menu = navigationView.getMenu();
+
+        menu.add("Artigos");
+        menu.add("Videos");
+
+        SubMenu topic = menu.addSubMenu("TÓPICOS");
+
+        topic.add("Dengue");
+        topic.add("Ouvido");
+        topic.add("Garganta");
+
+        int size = menu.size();
+        for ( int i = 0; i < size; i++ ){
+            MenuItem item = menu.getItem(i);
+            String title = (String) item.getTitle();
+            item.setIcon(getIcon(title));
+        }
+
+        int sizeTopics = topic.size();
+        for ( int i = 0; i < sizeTopics; i++ ){
+            MenuItem item = topic.getItem(i);
+            String title = (String) item.getTitle();
+            item.setIcon(getIcon(title));
+        }
+
+    }
+
+    private int getIcon(String title){
+        if ( title.equals("Artigos") ){
+            return android.R.drawable.ic_menu_send;
+        }else if (title.equals("Videos")){
+            return android.R.drawable.ic_menu_add;
+        }
+        else if (title.equals("Dengue")){
+            return android.R.drawable.ic_menu_call;
+        }
+        else if (title.equals("Ouvido")){
+            return android.R.drawable.ic_menu_compass;
+        }
+        else if (title.equals("Garganta")){
+            return android.R.drawable.ic_menu_directions;
+        }
+        return 1;
     }
 
     @Override
@@ -82,22 +126,9 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camara) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }
