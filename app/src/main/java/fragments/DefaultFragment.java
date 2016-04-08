@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +15,21 @@ import android.view.ViewGroup;
 import com.example.jeffersonalmeida.myappnewasversion.R;
 
 import adapters.MyAdapter;
+import okhttp3.ResponseBody;
+import restapi.RestClient;
+import restapi.RestInterface;
+import restapi.Result;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DefaultFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    private RestInterface apiService;
 
     private Context context;
 
@@ -34,13 +44,40 @@ public class DefaultFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
         this.context = context;
+    }
+
+    private Callback<Result> callback = new Callback<Result>() {
+        @Override
+        public void onResponse(Call<Result> call, Response<Result> response) {
+            if (response.isSuccess()) {
+                Result resul = response.body();
+                Log.d("onResponse", "onResponse");
+                showContent(resul);
+            } else {
+                int statusCode = response.code();
+                // handle request errors yourself
+                ResponseBody errorBody = response.errorBody();
+            }
+        }
+
+        @Override
+        public void onFailure(Call<Result> call, Throwable t) {
+            Log.d("FAILURE", "Failure");
+        }
+    };
+
+    private void showContent(Result resul) {
+        // specify an adapter (see also next example)
+        mAdapter = new MyAdapter(context, resul);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        RestClient restInterface = new RestClient();
+        apiService = restInterface.getApiService();
     }
 
     @Override
@@ -58,9 +95,10 @@ public class DefaultFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(this.context);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // specify an adapter (see also next example)
-        mAdapter = new MyAdapter(context);
-        mRecyclerView.setAdapter(mAdapter);
+        Call<Result> result = apiService.getRecentPosts();
+
+        result.enqueue(callback);
+
         return screen;
     }
 
